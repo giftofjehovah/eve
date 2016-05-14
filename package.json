@@ -21,8 +21,12 @@
     "standard": "^7.0.1"
   },
   "dependencies": {
+    "dotenv": "^2.0.0",
     "express": "^4.13.4",
     "request": "^2.72.0",
-    "socket.io": "^1.4.6"
+    "sentiment": "^1.0.6",
+    "socket.io": "^1.4.6",
+    "telegram-node-bot": "^2.1.2",
+    "tiny-request": "^2.0.0"
   }
 }
