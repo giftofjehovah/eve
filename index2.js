@@ -1,25 +1,68 @@
 'use strict'
-const token = '228349129:AAHgIK5kHaNBuzPoZpeNevb6FAVDOY7JMMI'
-const bot = require('telegram-node-bot')(token)
+require('dotenv').config()
+const bot = require('telegram-node-bot')(process.env.BOT_TOKEN)
 const sentiment = require('sentiment')
 
 bot.router
   .when(['/start'], 'StartController')
   // .when(['/stop'], 'StopController')
   // .when(['/restart'], 'RestartController')
-  .when(['/remove :userid'], 'RemoveController')
-  .when(['draw'], 'DrawController')
+  // .when(['/remove :userId'], 'RemoveController')
+  .when(['/create :query'], 'CreateEventController')
+  .when(['/location :query'], 'LocationController')
+  .when(['/date :query'], 'DateController')
+  .when(['/time :query'], 'TimeController')
+  .when(['/status :query'], 'StatusController')
+  .when(['/in'], 'ConfirmController')
+  .when(['/out'], 'CancelController')
+  .when(['/stef'], 'DrawController')
   .otherwise('OtherwiseController')
 
-bot.controller('RemoveController', ($) => {
-  bot.for('/remove :userid', () => {
-    $.sendMessage('this is chicken friendly')
+bot.controller('DrawController', ($) => {
+  bot.for('/stef', ($) => {
+    // $.sendMessage('this is chicken unfriendly')
+    $.sendPhotoFromUrl('http://img.picturequotes.com/2/11/10168/draw-me-like-one-of-your-french-girls-quote-1.jpg')
   })
 })
 
-bot.controller('PingController', ($) => {
-  bot.for('draw :query', () => {
-    $.sendMessage('$.query.num1')
+bot.controller('CreateEventController', ($) => {
+  bot.for('/create :query', () => {
+    $.sendMessage('removing ' + $.query.userId)
+  })
+})
+
+bot.controller('LocationController', ($) => {
+  bot.for('/location :query', () => {
+    $.sendMessage('removing ' + $.query.userId)
+  })
+})
+
+bot.controller('DateController', ($) => {
+  bot.for('/date :query', () => {
+    $.sendMessage('removing ' + $.query.userId)
+  })
+})
+
+bot.controller('TimeController', ($) => {
+  bot.for('/time :query', () => {
+    $.sendMessage('removing ' + $.query.userId)
+  })
+})
+
+bot.controller('StatusController', ($) => {
+  bot.for('/status :query', () => {
+    $.sendMessage('removing ' + $.query.userId)
+  })
+})
+
+bot.controller('ConfirmController', ($) => {
+  bot.for('/in', () => {
+    $.sendMessage('removing ' + $.query.userId)
+  })
+})
+bot.controller('CancelController', ($) => {
+  bot.for('/out', () => {
+    $.sendMessage('removing ' + $.query.userId)
   })
 })
 
