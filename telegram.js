@@ -200,16 +200,17 @@ class Telegram {
             chat_id: chatId,
             text: text
         })
-
-        if (text.length > 4096) {
-            var self = this
-            this.sendMessage(chatId, text.slice(0, 4096), options, (r) => {
-                if (r) {
-                    self.sendMessage(chatId, text.slice(4096, text.length), options, callback)
-                }
-            })
-        } else {
-            this.call('sendMessage', preparedOptions.params, preparedOptions.callback)
+        if (text) {
+          if (text.length > 4096) {
+              var self = this
+              this.sendMessage(chatId, text.slice(0, 4096), options, (r) => {
+                  if (r) {
+                      self.sendMessage(chatId, text.slice(4096, text.length), options, callback)
+                  }
+              })
+          } else {
+              this.call('sendMessage', preparedOptions.params, preparedOptions.callback)
+          }
         }
     }
 
@@ -479,7 +480,10 @@ class Telegram {
             timeout: 50,
             offset: offset
         }, (updates, err) => {
+            console.log(updates)
+            console.log(err)
             if (!err && updates) {
+                console.log(updates)
                 if (updates["result"]) {
                     if (updates["result"].length !== 0) {
                         self._getUpdates(callback, updates["result"][updates["result"].length - 1]["update_id"] + 1)
@@ -498,13 +502,13 @@ class Telegram {
     }
 
     _processCommand(update) {
+        console.log(update)
         if (update.chosen_inline_result) {
             return
         }
 
         if (update.callback_query) {
             var callbackQuery = update.callback_query
-
 
             if (this.callbackQueriesCallbacks[callbackQuery.from.id + ':' + callbackQuery.data]) {
                 this.callbackQueriesCallbacks[callbackQuery.from.id + ':' + callbackQuery.data](callbackQuery)
@@ -531,14 +535,19 @@ class Telegram {
             return
         }
 
-        if (update.message["chat"]) {
-            var chatId = update.message["chat"]["id"]
-        } else {
-            var chatId = update.message.from.id
+        if(update.message){
+            if (update.message["chat"]) {
+                var chatId = update.message["chat"]["id"]
+            } else {
+                var chatId = update.message.from.id
+            }
         }
 
-        var user = update.message.from
-        var message = update.message["text"]
+        if(update.message){
+            var user = update.message.from
+            var message = update.message["text"]
+        }
+
 
         var scope = this._createScope(chatId, user, update)
 
@@ -618,7 +627,7 @@ class Telegram {
                     }
                     result.command = query[i]
                     break
-                case ':':     
+                case ':':
                     for (var queryCount = 1; queryCount < query.length; queryCount++) {
                         appendQuery += query[queryCount] + ' '
                     }

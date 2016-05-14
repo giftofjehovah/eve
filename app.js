@@ -1,12 +1,14 @@
 'use strict'
 const token = '228349129:AAHgIK5kHaNBuzPoZpeNevb6FAVDOY7JMMI'
-const bot = require('telegram-node-bot')(token)
+// const bot = require('telegram-node-bot')(token)
+const bot = require('./telegram')(token)
 
 bot.router
   .when(['/start'], 'StartController')
+  .when(['/form'], 'FormController')
   .when(['/ping'], 'PingController')
   .when(['age'], 'AgeController')
-  .when(['/date', '/date :date', '/location', '/location :location'], 'EventController')
+  .when(['/date', '/time', '/where', '/location'], 'EventController')
   .when(['/status'], 'StatusController')
   .when(['/change'], 'ChangeController')
   .otherwise('OtherwiseController')
@@ -20,8 +22,53 @@ bot.controller('PingController', ($) => {
   })
 })
 
+bot.controller('FormController', ($) => {
+  bot.for('/form', () => {
+    var form = {
+      name: {
+        q: 'Send me your name',
+        error: 'sorry, wrong input',
+        validator: (input, callback) => {
+          if (input['text']) {
+            callback(true)
+            console.log('asdsa')
+            return
+          }
+          callback(false)
+        }
+      },
+      age: {
+        q: 'Send me your age',
+        error: 'sorry, wrong input',
+        validator: (input, callback) => {
+          if (input['text']) {
+            callback(true)
+            return
+          }
+          callback(false)
+        }
+      },
+      gender: {
+        q: 'Send me your gender',
+        error: 'sorry, wrong input',
+        validator: (input, callback) => {
+          if (input['text']) {
+            callback(true)
+            return
+          }
+          callback(false)
+        }
+      }
+    }
+    $.runForm(form, (result) => {
+      console.log(result)
+      $.sendMessage(`You have an event on ${result.name} at ${result.age} at  ${result.gender}`)
+    })
+  })
+})
+
 bot.controller('StartController', ($) => {
-  var form = {
+  const form = {
     date: {
       q: 'What date is the event? (dd/mm)',
       error: 'sorry, wrong input',
@@ -56,9 +103,12 @@ bot.controller('StartController', ($) => {
       }
     }
   }
-  $.runForm(form, (result) => {
-    console.log(result)
-    $.sendMessage(`You have an event on ${result.date} at ${result.time} at  ${result.location}`)
+
+  bot.for('/start', () => {
+    $.runForm(form, (result) => {
+      console.log(result)
+      $.sendMessage(`You have an event on ${result.date} at ${result.time} at  ${result.location}`)
+    })
   })
 })
 
@@ -131,4 +181,5 @@ bot.controller('ChangeController', ($) => {
 })
 
 bot.controller('OtherwiseController', ($) => {
+  // $.sendMessage($.message.text)
 })
