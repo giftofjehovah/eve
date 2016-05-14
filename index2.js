@@ -15,13 +15,27 @@ bot.router
   .when(['/status :query'], 'StatusController')
   .when(['/in'], 'ConfirmController')
   .when(['/out'], 'CancelController')
-  .when(['/stef'], 'DrawController')
+  .when(['/stef :type'], 'DrawController')
+  .when(['/sticker'], 'StickerController')
   .otherwise('OtherwiseController')
 
 bot.controller('DrawController', ($) => {
-  bot.for('/stef', ($) => {
-    // $.sendMessage('this is chicken unfriendly')
-    $.sendPhotoFromUrl('http://img.picturequotes.com/2/11/10168/draw-me-like-one-of-your-french-girls-quote-1.jpg')
+  bot.for('/stef :type', ($) => {
+    if ($.query.type === 'smile') {
+      $.sendMessage('\ud83d\ude03')
+    } else if ($.query.type.toLowerCase() === 'is angry') {
+      // $.sendMessage('hehe')
+      $.sendMessage('\uD83D\uDE20')
+    }
+    // console.log($)
+    // $.sendMessage('asdasdasd')
+    // $.sendPhotoFromUrl('http://img.picturequotes.com/2/11/10168/draw-me-like-one-of-your-french-girls-quote-1.jpg')
+  })
+})
+
+bot.controller('StickerController', ($) => {
+  bot.for('/create :query', () => {
+    $.sendSticker('test')
   })
 })
 
