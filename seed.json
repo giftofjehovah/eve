@@ -1,0 +1,5 @@
+{
+	"undefined": "localhost/eve",
+	"dev": "localhost/eve",
+	"prod": "localhost/eve"
+}

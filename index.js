@@ -8,6 +8,7 @@ const morgan = require('morgan')
 const cookieParser = require('cookie-parser')
 const ejsLayouts = require('express-ejs-layouts')
 const methodOverride = require('method-override')
+require('ejs')
 
 mongoose.connect(mongoUri)
 app.listen(port, function () {
@@ -15,6 +16,9 @@ app.listen(port, function () {
 })
 
 // Setup middleware
+// Express settings
+app.set('view engine', 'ejs');
+app.set("views", __dirname + "/views");
 app.use(morgan('dev'));
 app.use(cookieParser());
 app.use(bodyParser.json());
@@ -35,9 +39,7 @@ app.use(methodOverride(function(request, response) {
   }
 }));
 
-// Express settings
-app.set('view engine', 'ejs');
-app.set("views", __dirname + "/views");
 
-var routes = require(__dirname + "/config/routes");
-app.use(routes)
+
+const routes = require(__dirname + "/config/routes");
+app.use(routes);

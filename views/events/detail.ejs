@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Apple Pi</title>
+    <link href='https://fonts.googleapis.com/css?family=Oxygen:400,300,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <style>
+    .navbar>.container .navbar-brand, .navbar>.container-fluid .navbar-brand {
+      margin-left: -90px;
+      font-size: 20px;
+    }
+
+    .navbar-header {
+      font-weight: 700;
+    }
+    .tokenDisplay {
+      word-wrap: break-word;
+    }
+	.container {
+      font-family: 'Oxygen', sans-serif;
+    }
+
+        #sidebar-wrapper {
+            /*z-index: 1;
+          width: 250px;
+          overflow-y: hidden;*/
+            background: #00293C;
+            opacity: 0.9;
+            min-height: 100%;
+            height: 100vh;
+            padding-left: 0px;
+            padding-right: 0px;
+        }
+
+        .row {
+            height: 100%;
+        }
+
+        #page-content-wrapper {
+            /*width: 100%;*/
+            padding-top: 20px;
+            padding-left: 50px;
+            float: left;
+            height: 90vh;
+            background: #FDffff;
+        }
+
+        #wrapper {
+            background: #F1F1F2;
+        }
+
+        #wrapper.menuDisplayed #sidebar-wrapper {
+            width: 250px;
+        }
+
+        #wrapper.menuDisplayed #page-content-wrapper {
+            padding-left: 250px;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar-nav li {
+            text-indent: 15px;
+            line-height: 40px;
+        }
+
+        .sidebar-nav li a {
+            display: block;
+            text-decoration: none;
+            font-family: 'Oxygen', sans-serif;
+            font-weight: 300;
+            color: rgb(202, 212, 228);
+        }
+
+        .navbar-nav>li>a:hover {
+          color: rgb(6, 163, 179);
+          background: rgb(3, 35, 47);
+        }
+
+        .sidebar-nav li:first-child {
+            padding-top: 10px;
+        }
+
+        .sidebar-nav li a:hover {
+            background: rgb(11, 29, 41);
+            color: rgb(6, 163, 179);
+        }
+
+        .navbar {
+            margin-bottom: 0px;
+            /*background: rgb(7, 64, 88);*/
+            background: rgb(3, 35, 47);
+            color: rgb(242, 242, 242);
+            margin-bottom: -10px;
+            border-radius: 0px !important;
+        }
+
+        .navbar a {
+            color: rgb(242, 242, 242);
+            font-weight: 700;
+        }
+
+        hr {
+            border: none;
+        }
+
+        table {
+            /*border-bottom: 1px solid gray;*/
+            padding: 5px 10px;
+            padding-top: 30px;
+            font-family: 'Oxygen', sans-serif;
+        }
+
+        tr,
+        th,
+        td {
+            border-bottom: 1px solid rgb(223, 228, 226);
+            padding: 5px;
+        }
+
+        span {
+          padding-right: 10px;
+        }
+
+        th {
+          color: rgb(146, 139, 147);
+          padding-bottom: 20px;
+        }
+
+    </style>
+
+  </head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="container">
+                <a class="navbar-brand" href="/">BetterJess</a>
+        </div>
+    </nav>
+
+                        <!-- <a href="#" class= "btn btn-success" id="toggle-menu">Toggle Menu</a> -->
+                        <%- body %>
+
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+</body>
+
+</html>
