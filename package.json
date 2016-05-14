@@ -1,0 +1,23 @@
+{
+  "name": "angelhack",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "standard --verbose"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/giftofjehovah/eve.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/giftofjehovah/eve/issues"
+  },
+  "homepage": "https://github.com/giftofjehovah/eve#readme",
+  "devDependencies": {
+    "standard": "^7.0.1"
+  }
+}
