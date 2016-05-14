@@ -1,4 +1,4 @@
 function thisShouldFailTest () {
-  console.log('hi')
+  console.log('hi');
 }
 thisShouldFailTest()
