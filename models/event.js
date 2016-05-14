@@ -4,15 +4,15 @@ const geocoder = require('geocoder')
 const eventSchema = mongoose.Schema({
   chatId: String,
   location: String,
-  date: Date,
-  time: Date,
+  date: String,
+  time: String,
   participants: [String],
   status: Boolean,
   latitude: String,
   longtitude: String
 })
 
-eventSchema.methods.create = (chatId, location, date, time, cb) => {
+eventSchema.methods.create = function (chatId, location, date, time, cb) {
   this.chatId = chatId
   this.location = location
   this.date = date
@@ -20,9 +20,8 @@ eventSchema.methods.create = (chatId, location, date, time, cb) => {
 
   geocoder.geocode(this.location, (err, data) => {
     if (err) throw err
-    this.latitude = data.results[0].geometry.location.lat
-    this.longtitude = data.results[0].geometry.location.lng
-
+    // this.latitude = data.results[0].geometry.location.lat
+    // this.longtitude = data.results[0].geometry.location.lng
     this.save((err, event) => {
       if (err) cb(err, null)
       var info = {
@@ -35,35 +34,47 @@ eventSchema.methods.create = (chatId, location, date, time, cb) => {
   })
 }
 
-eventSchema.methods.addParticipants = (participants, cb) => {
-  participants.forEach((participant) => {
-    this.participants.push(participant)
+eventSchema.methods.addParticipants = function (participant, cb) {
+  var findPerson = this.participants.find(function (person) {
+    return person === participant
   })
 
-  this.save((err, event) => {
-    if (err) cb(err, null)
-    var info = {
-      participants: event.participants
-    }
-    cb(null, info)
-  })
+  if (!findPerson) {
+    this.participants.push(participant)
+    this.save((err, event) => {
+      if (err) return cb(err, null)
+      var info = {
+        status: true,
+        participants: event.participants
+      }
+      return cb(null, info)
+    })
+  } else {
+    cb(null, {status: false})
+  }
 }
 
-eventSchema.methods.removeParticipants = (participant, cb) => {
+eventSchema.methods.removeParticipant = function (participant, cb) {
+  var kick = null
   this.participants.forEach((member, i) => {
     if (member === participant) {
-      this.participants.splice(i, 1)
+      kick = this.participants.splice(i, 1)
       return
     }
   })
 
-  this.save((err, event) => {
-    if (err) cb(err, null)
-    var info = {
-      participants: event.participants
-    }
-    cb(null, info)
-  })
+  if (kick) {
+    this.save((err, event) => {
+      if (err) return cb(err, null)
+      var info = {
+        status: true,
+        participants: event.participants
+      }
+      return cb(null, info)
+    })
+  } else {
+    cb(null, {status: false})
+  }
 }
 
 module.exports = mongoose.model('Event', eventSchema)
