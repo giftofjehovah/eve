@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const geocoder = require('geocoder')
 
 const eventSchema = mongoose.Schema({
   chatId: String,
@@ -6,7 +7,9 @@ const eventSchema = mongoose.Schema({
   date: Date,
   time: Date,
   participants: [String],
-  status: Boolean
+  status: Boolean,
+  latitude: String,
+  longtitude: String
 })
 
 eventSchema.methods.create = (chatId, location, date, time, cb) => {
@@ -15,14 +18,20 @@ eventSchema.methods.create = (chatId, location, date, time, cb) => {
   this.date = date
   this.time = time
 
-  this.save((err, event) => {
-    if (err) cb(err, null)
-    var info = {
-      location: event.location,
-      date: event.date,
-      time: event.time
-    }
-    cb(null, info)
+  geocoder.geocode(this.location, (err, data) => {
+    if (err) throw err
+    this.latitude = data.results[0].geometry.location.lat
+    this.longtitude = data.results[0].geometry.location.lng
+
+    this.save((err, event) => {
+      if (err) cb(err, null)
+      var info = {
+        location: event.location,
+        date: event.date,
+        time: event.time
+      }
+      cb(null, info)
+    })
   })
 }
 
