@@ -1,66 +1,134 @@
 'use strict'
 const token = '228349129:AAHgIK5kHaNBuzPoZpeNevb6FAVDOY7JMMI'
 const bot = require('telegram-node-bot')(token)
-const sentiment = require('sentiment')
 
 bot.router
   .when(['/start'], 'StartController')
-  // .when(['/stop'], 'StopController')
-  // .when(['/restart'], 'RestartController')
-  .when(['/remove :userid'], 'RemoveController')
   .when(['/ping'], 'PingController')
+  .when(['age'], 'AgeController')
+  .when(['/date', '/date :date', '/location', '/location :location'], 'EventController')
+  .when(['/status'], 'StatusController')
+  .when(['/change'], 'ChangeController')
   .otherwise('OtherwiseController')
-
-bot.controller('RemoveController', ($) => {
-  bot.for('/remove :userid', () => {
-    $.sendMessage('this is chicken friendly')
-  })
-})
 
 bot.controller('PingController', ($) => {
   bot.for('/ping', () => {
-    $.sendMessage('this is chicken friendly' + $.chatId)
+    $.sendMessage('this is chicken friendly: ')
+    $.sendMessage('Chat ID: ' + $.chatId)
+    $.sendMessage('User ID: ' + $.user.id)
+    console.log($)
   })
 })
 
 bot.controller('StartController', ($) => {
-  bot.for('/start', ($) => {
+  var form = {
+    date: {
+      q: 'What date is the event? (dd/mm)',
+      error: 'sorry, wrong input',
+      validator: (input, callback) => {
+        if (input['text']) {
+          callback(true)
+          return
+        }
+        callback(false)
+      }
+    },
+    time: {
+      q: 'What time is the event? (hh:mm)',
+      error: 'sorry, wrong input',
+      validator: (input, callback) => {
+        if (input['text']) {
+          callback(true)
+          return
+        }
+        callback(false)
+      }
+    },
+    location: {
+      q: 'Where is the event located?',
+      error: 'sorry, wrong input',
+      validator: (input, callback) => {
+        if (input['text']) {
+          callback(true)
+          return
+        }
+        callback(false)
+      }
+    }
+  }
+  $.runForm(form, (result) => {
+    console.log(result)
+    $.sendMessage(`You have an event on ${result.date} at ${result.time} at  ${result.location}`)
+  })
+})
+
+bot.controller('EventController', ($) => {
+  bot.for('/date', () => {
+    $.sendMessage('Date: ' + '15/5')
+  })
+  bot.for('/date :date', () => {
+    $.sendMessage('Date: ' + $.query.date)
+  })
+  bot.for('/time', () => {
+    $.sendMessage('Time: ' + '15:15')
+  })
+  bot.for('/time :time', () => {
+    $.sendMessage('Time: ' + $.query.time)
+  })
+  bot.for('/where', () => {
+    $.sendMessage('Location: ' + 'The Hub')
+    $.sendLocation(1.290270, 103.851959)
+  })
+  bot.for('/location', () => {
+    $.sendMessage('Where is the event located?')
+    $.waitForRequest(($) => {
+      const location = $.message.text
+      $.sendMessage(`Location set to ${location}`)
+    })
+  })
+})
+
+bot.controller('StatusController', ($) => {
+  bot.for('/status', ($) => {
+    const location = 'Jurong'
+    const datetime = '12/5 12:00'
+    const participants = ['ZJ', 'CX', 'Jon', 'Stef', 'JR']
+    $.sendMessage(`Location: ${location}
+Date/Time: ${datetime}
+Participants: ${participants}`)
+  })
+})
+
+bot.controller('ChangeController', ($) => {
+  bot.for('/change', ($) => {
     $.runMenu({
-      message: 'Your selection:',
-      layout: 2,
-      'Option A': () => {
+      message: 'What would you like to change?',
+      layout: 3,
+      'Date': () => {
         $.sendMessage('You selected Option A!')
       },
-      'Option B': () => {
+      'Time': () => {
         $.sendMessage('You selected Option B!')
       },
-      'Option C': () => {
-        $.sendMessage('You selected Option C!')
-      },
-      'Option D': () => {
-        $.sendMessage('You selected Option D!')
+      'Location': () => {
+        $.routeTo('/location')
       },
       options: {
-        parse_mode: 'Markdown' // in options field you can pass some additional data, like parse_mode
+        parse_mode: 'Markdown'
       },
       'Exit': {
         message: 'Do you realy want to exit?',
         resize_keyboard: true,
-        'yes': () => {
+        'Yes': () => {
         },
-        'no': () => {
+        'No': () => {
         }
       },
-      'anyMatch': () => { // will be executed at any other message
-
+      'anyMatch': () => {
       }
     })
   })
 })
 
 bot.controller('OtherwiseController', ($) => {
-  bot.for('what :text', ($) => {
-    const score = sentiment($.query.text)
-    $.sendMessage(score)
-  })
 })
