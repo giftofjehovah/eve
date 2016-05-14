@@ -19,7 +19,7 @@ bot.controller('RemoveController', ($) => {
 
 bot.controller('PingController', ($) => {
   bot.for('/ping', () => {
-    $.sendMessage('this is chicken friendly')
+    $.sendMessage('this is chicken friendly' + $.chatId)
   })
 })
 
@@ -59,7 +59,7 @@ bot.controller('StartController', ($) => {
 })
 
 bot.controller('OtherwiseController', ($) => {
-  bot.for(':text', ($) => {
+  bot.for('what :text', ($) => {
     const score = sentiment($.query.text)
     $.sendMessage(score)
   })
