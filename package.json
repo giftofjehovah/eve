@@ -19,5 +19,10 @@
   "homepage": "https://github.com/giftofjehovah/eve#readme",
   "devDependencies": {
     "standard": "^7.0.1"
+  },
+  "dependencies": {
+    "express": "^4.13.4",
+    "request": "^2.72.0",
+    "socket.io": "^1.4.6"
   }
 }
