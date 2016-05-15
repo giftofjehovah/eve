@@ -27,8 +27,6 @@ new CronJob('* * * * *', function () {
         event.save()
         bot.sendMessage(event.chatId, `You have an upcoming event within the next hour.\n ${event.date} at ${event.time} at  ${event.location}`)
       })
-    } else {
-      bot.sendMessage('You already have an event currently')
     }
   }
 }, null, true, 'Asia/Singapore')
