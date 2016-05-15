@@ -5,19 +5,43 @@ const port = process.env.PORT || 3000
 const mongoUri = process.env.MONGOLAB_URI || 'mongodb://localhost:27017/eve'
 const mongoose = require('mongoose')
 const Event = require('./models/event')
+const CronJob = require('cron').CronJob
+const moment = require('moment')
 
 mongoose.connect(mongoUri)
 app.listen(port, function () {
   console.log('server listening on port ' + port)
 })
 
+new CronJob('* * * * *', function () {
+  var now = moment()
+  var hourLater = moment() + 60 * 60 * 1000
+
+  Event.find({datetime: {$gt: now, $lt: hourLater}, reminded: false}).exec(callback)
+
+  function callback (err, events) {
+    if (err) throw err
+    if (events.length > 0) {
+      events.forEach(function (event) {
+        event.reminded = true
+        event.save()
+        bot.sendMessage(event.chatId, `You have an upcoming event within the next hour.\n ${event.date} at ${event.time} at  ${event.location}`)
+      })
+    } else {
+      bot.sendMessage('You already have an event currently')
+    }
+  }
+}, null, true, 'Asia/Singapore')
+
 const token = '228349129:AAHgIK5kHaNBuzPoZpeNevb6FAVDOY7JMMI'
 const bot = require('./telegram')(token)
 // const bot = require('telegram-node-bot')(token)
 
 bot.router
-  .when(['/create'], 'StartController')
-  .when(['/in', '/out', 'in', 'out'], 'RSVPController')
+  .when(['/start', '/help'], 'StartController')
+  .when(['/create'], 'CreateController')
+  .when(['/cancel'], 'CancelController')
+  .when(['/in', '/out'], 'RSVPController')
   .when(['/ping'], 'PingController')
   .when(['/date', '/time', '/location'], 'EventController')
   .when(['/status'], 'StatusController')
@@ -34,6 +58,18 @@ bot.controller('PingController', ($) => {
 })
 
 bot.controller('StartController', ($) => {
+  bot.for('/start', () => {
+    $.sendMessage(`
+Hi, I'm BetterStef
+/create - create a new event
+/status - check an existing event
+/in - you're attending
+/out - you're not attending
+      `)
+  })
+})
+
+bot.controller('CreateController', ($) => {
   const form = {
     date: {
       q: 'What date is the event? (dd/mm)',
@@ -75,16 +111,47 @@ bot.controller('StartController', ($) => {
       if (err) throw err
       if (!event) {
         $.runForm(form, (result) => {
-          var event = new Event()
-          event.create($.chatId, result.location, result.date, result.time, function (err, info) {
+          const event = new Event()
+          const date = moment(result.date, 'DD-MM').format('Do MMM YYYY')
+          const time = moment(result.time, 'HH:mm').format('HH:mm')
+          const datetime = moment(result.date + ' ' + result.time, 'DD-MM HH:mm')
+          console.log(date, time, datetime)
+          event.create($.chatId, result.location, date, time, datetime, function (err, info) {
             if (err) throw err
-            $.sendMessage(`You have an event on ${info.date} at ${info.time} at  ${info.location}`)
+            $.sendMessage(`
+You have an event on ${info.date} at ${info.time} at  ${info.location}
+/in to indicate you're going
+/out to indicate you're not
+/status to check the event status
+              `)
           })
         })
       } else {
         $.sendMessage('You already have an event currently')
       }
     })
+  })
+})
+
+bot.controller('CancelController', ($) => {
+  Event.findOne({chatId: $.chatId}, (err, event) => {
+    if (err) throw err
+    if (event) {
+      // delete event
+      $.runMenu({
+        message: 'Are you sure you want to delete the event?',
+        layout: 2,
+        'Yes': () => {
+          event.remove()
+          $.sendMessage('Event has been deleted.')
+        },
+        'No': () => {
+          $.sendMessage('Event was not deleted.')
+        }
+      })
+    } else {
+      $.sendMessage('There is no event scheduled. /create to get started.')
+    }
   })
 })
 
@@ -178,6 +245,8 @@ bot.controller('RSVPController', ($) => {
             $.sendMessage('already in la dey')
           }
         })
+      } else {
+        $.sendMessage('No events scheduled. /create to create an event.')
       }
     })
   })
@@ -195,6 +264,8 @@ bot.controller('RSVPController', ($) => {
             $.sendMessage('already out la dey')
           }
         })
+      } else {
+        $.sendMessage('No events scheduled. /create to create an event.')
       }
     })
   })
@@ -202,30 +273,37 @@ bot.controller('RSVPController', ($) => {
 
 bot.controller('ChangeController', ($) => {
   bot.for('/change', ($) => {
-    $.runMenu({
-      message: 'What would you like to change?',
-      layout: 3,
-      'Date': () => {
-        $.routeTo('/date')
-      },
-      'Time': () => {
-        $.routeTo('/time')
-      },
-      'Location': () => {
-        $.routeTo('/location')
-      },
-      options: {
-        parse_mode: 'Markdown'
-      },
-      'Exit': {
-        message: 'Do you realy want to exit?',
-        resize_keyboard: true,
-        'Yes': () => {
-        },
-        'No': () => {
-        }
-      },
-      'anyMatch': () => {
+    Event.findOne({chatId: $.chatId}, (err, event) => {
+      if (err) throw err
+      if (event) {
+        $.runMenu({
+          message: 'What would you like to change?',
+          layout: 3,
+          'Date': () => {
+            $.routeTo('/date')
+          },
+          'Time': () => {
+            $.routeTo('/time')
+          },
+          'Location': () => {
+            $.routeTo('/location')
+          },
+          options: {
+            parse_mode: 'Markdown'
+          },
+          'Exit': {
+            message: 'Do you realy want to exit?',
+            resize_keyboard: true,
+            'Yes': () => {
+            },
+            'No': () => {
+            }
+          },
+          'anyMatch': () => {
+          }
+        })
+      } else {
+        $.sendMessage('No events scheduled. /create to create an event.')
       }
     })
   })

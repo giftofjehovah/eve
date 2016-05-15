@@ -6,17 +6,21 @@ const eventSchema = mongoose.Schema({
   location: String,
   date: String,
   time: String,
+  datetime: Date,
   participants: [String],
   status: Boolean,
   latitude: String,
-  longtitude: String
+  longtitude: String,
+  reminded: Boolean
 })
 
-eventSchema.methods.create = function (chatId, location, date, time, cb) {
+eventSchema.methods.create = function (chatId, location, date, time, datetime, cb) {
   this.chatId = chatId
   this.location = location
   this.date = date
   this.time = time
+  this.datetime = datetime
+  this.reminded = false
 
   geocoder.geocode(this.location, (err, data) => {
     if (err) throw err
@@ -27,7 +31,8 @@ eventSchema.methods.create = function (chatId, location, date, time, cb) {
       var info = {
         location: event.location,
         date: event.date,
-        time: event.time
+        time: event.time,
+        datetime: event.datetime
       }
       cb(null, info)
     })
