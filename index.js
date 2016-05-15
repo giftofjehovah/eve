@@ -230,7 +230,7 @@ bot.controller('StatusController', ($) => {
         if (event.location) msg += `Location: ${event.location}\n`
         if (event.time) msg += `Time: ${event.time}\n`
         if (event.date) msg += `Date: ${event.date}\n`
-        if (event.participants.length > 0) msg += `Participants: ${event.participants}`
+        if (event.participants.length > 0) msg += `Participants: ${event.participants.join(', ')}`
         $.sendMessage(msg)
         if (event.latitude && event.longtitude) {
           $.sendLocation(event.latitude, event.longtitude)
