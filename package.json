@@ -19,5 +19,18 @@
   "homepage": "https://github.com/giftofjehovah/eve#readme",
   "devDependencies": {
     "standard": "^7.0.1"
+  },
+  "dependencies": {
+    "cron": "^1.1.0",
+    "dotenv": "^2.0.0",
+    "express": "^4.13.4",
+    "geocoder": "^0.2.2",
+    "moment": "^2.13.0",
+    "mongoose": "^4.4.17",
+    "request": "^2.72.0",
+    "sentiment": "^1.0.6",
+    "socket.io": "^1.4.6",
+    "telegram-node-bot": "^2.1.2",
+    "tiny-request": "^2.0.0"
   }
 }
