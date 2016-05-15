@@ -7,6 +7,7 @@ const mongoose = require('mongoose')
 const Event = require('./models/event')
 const CronJob = require('cron').CronJob
 const moment = require('moment')
+const geocoder = require('geocoder')
 
 mongoose.connect(mongoUri)
 app.listen(port, function () {
@@ -26,6 +27,7 @@ new CronJob('* * * * *', function () {
         event.reminded = true
         event.save()
         bot.sendMessage(event.chatId, `You have an upcoming event within the next hour.\n ${event.date} at ${event.time} at  ${event.location}`)
+        bot.sendLocation(event.chatId, event.latitude, event.longtitude)
       })
     }
   }
@@ -198,9 +200,16 @@ bot.controller('EventController', ($) => {
         $.waitForRequest(($) => {
           const location = $.message.text
           event.location = location
-          event.save(function (err, event) {
+          geocoder.geocode(event.location, (err, data) => {
             if (err) throw err
-            $.sendMessage(`Location set to ${location}`)
+            if (data) {
+              event.latitude = data.results[0].geometry.location.lat
+              event.longtitude = data.results[0].geometry.location.lng
+            }
+            event.save(function (err, event) {
+              if (err) throw err
+              $.sendMessage(`Location set to ${location}`)
+            })
           })
         })
       } else {
@@ -223,6 +232,9 @@ bot.controller('StatusController', ($) => {
         if (event.date) msg += `Date: ${event.date}\n`
         if (event.participants.length > 0) msg += `Participants: ${event.participants}`
         $.sendMessage(msg)
+        if (event.latitude && event.longtitude) {
+          $.sendLocation(event.latitude, event.longtitude)
+        }
       }
     })
   })

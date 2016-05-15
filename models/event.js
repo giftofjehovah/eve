@@ -24,8 +24,10 @@ eventSchema.methods.create = function (chatId, location, date, time, datetime, c
 
   geocoder.geocode(this.location, (err, data) => {
     if (err) throw err
-    // this.latitude = data.results[0].geometry.location.lat
-    // this.longtitude = data.results[0].geometry.location.lng
+    if (data) {
+      this.latitude = data.results[0].geometry.location.lat
+      this.longtitude = data.results[0].geometry.location.lng
+    }
     this.save((err, event) => {
       if (err) cb(err, null)
       var info = {
