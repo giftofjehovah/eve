@@ -31,6 +31,6 @@
     "sentiment": "^1.0.6",
     "socket.io": "^1.4.6",
     "telegram-node-bot": "^2.1.2",
-    "tiny-request": "^2.0.0"
+    "tiny_request": "^1.0.8"
   }
 }
