@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
-const geocoder = require('geocoder')
+const MapboxClient = require('mapbox');
+const client = new MapboxClient('pk.eyJ1IjoiZ2lmdG9mamVob3ZhaCIsImEiOiJjaXB4Zmk3NnIwdzduZnZtMjg5OXRxZHlqIn0.Rm78HdPFp83YJhzwhP40Uw');
 
 const eventSchema = mongoose.Schema({
   chatId: String,
@@ -22,23 +23,25 @@ eventSchema.methods.create = function (chatId, location, date, time, datetime, c
   this.datetime = datetime
   this.reminded = false
 
-  geocoder.geocode(this.location, (err, data) => {
-    if (err) throw err
+
+client.geocodeForward(this.location, function(err, data) {
+  if (err) throw err
     if (data) {
-      this.latitude = data.results[0].geometry.location.lat
-      this.longtitude = data.results[0].geometry.location.lng
+      console.log(data.features[0].geometry.coordinates)
+      this.latitude = data.features[0].geometry.coordinates[0]
+      this.longtitude = data.features[0].geometry.coordinates[1]
     }
     this.save((err, event) => {
       if (err) cb(err, null)
-      var info = {
-        location: event.location,
-        date: event.date,
-        time: event.time,
-        datetime: event.datetime
-      }
-      cb(null, info)
+        var info = {
+          location: event.location,
+          date: event.date,
+          time: event.time,
+          datetime: event.datetime
+    }
+     cb(null, info)
     })
-  })
+  });
 }
 
 eventSchema.methods.addParticipants = function (participant, cb) {
