@@ -33,7 +33,7 @@ new CronJob('* * * * *', function () {
   }
 }, null, true, 'Asia/Singapore')
 
-const token = '228349129:AAHgIK5kHaNBuzPoZpeNevb6FAVDOY7JMMI'
+const token = '221690595:AAFe3vJiFboEyBqB98R2lE1G40GjGQTdHcM'
 const bot = require('./telegram')(token)
 // const bot = require('telegram-node-bot')(token)
 
