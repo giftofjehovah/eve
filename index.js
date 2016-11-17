@@ -10,6 +10,8 @@ const moment = require('moment')
 const geocoder = require('geocoder')
 
 mongoose.connect(mongoUri)
+console.log(mongoose.connection.host)
+console.log(mongoose.connection.port)
 app.listen(port, function () {
   console.log('server listening on port ' + port)
 })

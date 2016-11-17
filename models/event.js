@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
-const MapboxClient = require('mapbox');
-const client = new MapboxClient('pk.eyJ1IjoiZ2lmdG9mamVob3ZhaCIsImEiOiJjaXB4Zmk3NnIwdzduZnZtMjg5OXRxZHlqIn0.Rm78HdPFp83YJhzwhP40Uw');
+const MapboxClient = require('mapbox')
+const client = new MapboxClient('pk.eyJ1IjoiZ2lmdG9mamVob3ZhaCIsImEiOiJjaXB4Zmk3NnIwdzduZnZtMjg5OXRxZHlqIn0.Rm78HdPFp83YJhzwhP40Uw')
 
 const eventSchema = mongoose.Schema({
   chatId: String,
@@ -10,8 +10,8 @@ const eventSchema = mongoose.Schema({
   datetime: Date,
   participants: [String],
   status: Boolean,
-  latitude: String,
-  longtitude: String,
+  latitude: Number,
+  longtitude: Number,
   reminded: Boolean
 })
 
@@ -23,25 +23,25 @@ eventSchema.methods.create = function (chatId, location, date, time, datetime, c
   this.datetime = datetime
   this.reminded = false
 
-
-client.geocodeForward(this.location, function(err, data) {
-  if (err) throw err
+  client.geocodeForward(this.location, function (err, data) {
+    if (err) throw err
     if (data) {
-      console.log(data.features[0].geometry.coordinates)
+      console.log('location', data.features[0].geometry.coordinates)
       this.latitude = data.features[0].geometry.coordinates[0]
       this.longtitude = data.features[0].geometry.coordinates[1]
     }
-    this.save((err, event) => {
+    this.save(function (err, event) {
+      console.log('saving?')
       if (err) cb(err, null)
-        var info = {
-          location: event.location,
-          date: event.date,
-          time: event.time,
-          datetime: event.datetime
-    }
-     cb(null, info)
+      var info = {
+        location: event.location,
+        date: event.date,
+        time: event.time,
+        datetime: event.datetime
+      }
+      cb(null, info)
     })
-  });
+  })
 }
 
 eventSchema.methods.addParticipants = function (participant, cb) {
