@@ -2,13 +2,16 @@
 const express = require('express')
 const app = express()
 const port = process.env.PORT || 3000
-const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/eve'
+const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/evel'
 const mongoose = require('mongoose')
 const Event = require('./models/event')
 const CronJob = require('cron').CronJob
 const moment = require('moment')
 const geocoder = require('geocoder')
-mongoose.Promise = require('bluebird');
+const MapboxClient = require('mapbox')
+const client = new MapboxClient('pk.eyJ1IjoiZ2lmdG9mamVob3ZhaCIsImEiOiJjaXB4Zmk3NnIwdzduZnZtMjg5OXRxZHlqIn0.Rm78HdPFp83YJhzwhP40Uw')
+
+mongoose.Promise = global.Promise
 
 mongoose.connect(mongoUri)
 console.log(mongoose.connection.host)

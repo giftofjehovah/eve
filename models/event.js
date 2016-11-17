@@ -23,14 +23,14 @@ eventSchema.methods.create = function (chatId, location, date, time, datetime, c
   this.datetime = datetime
   this.reminded = false
 
-  client.geocodeForward(this.location, function (err, data) {
+  client.geocodeForward(this.location, (err, data) => {
     if (err) throw err
     if (data) {
       console.log('location', data.features[0].geometry.coordinates)
       this.latitude = data.features[0].geometry.coordinates[0]
       this.longtitude = data.features[0].geometry.coordinates[1]
     }
-    console.log(this.save)
+    // console.log('this is', this)
     this.save(function (err, event) {
       console.log('saving?')
       if (err) cb(err, null)
@@ -42,6 +42,17 @@ eventSchema.methods.create = function (chatId, location, date, time, datetime, c
       }
       cb(null, info)
     })
+    // this.save().then(function (event) {
+    //   var info = {
+    //     location: event.location,
+    //     date: event.date,
+    //     time: event.time,
+    //     datetime: event.datetime
+    //   }
+    //   cb(null, info)
+    // }).catch(function (err) {
+    //   cb(err, null)
+    // })
   })
 }
 
