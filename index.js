@@ -2,7 +2,7 @@
 const express = require('express')
 const app = express()
 const port = process.env.PORT || 3000
-const mongoUri = process.env.MONGOLAB_URI || 'mongodb://localhost:27017/eve'
+const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/eve'
 const mongoose = require('mongoose')
 const Event = require('./models/event')
 const CronJob = require('cron').CronJob
