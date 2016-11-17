@@ -30,6 +30,7 @@ eventSchema.methods.create = function (chatId, location, date, time, datetime, c
       this.latitude = data.features[0].geometry.coordinates[0]
       this.longtitude = data.features[0].geometry.coordinates[1]
     }
+    console.log(this.save)
     this.save(function (err, event) {
       console.log('saving?')
       if (err) cb(err, null)

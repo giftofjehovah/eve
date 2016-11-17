@@ -8,6 +8,7 @@ const Event = require('./models/event')
 const CronJob = require('cron').CronJob
 const moment = require('moment')
 const geocoder = require('geocoder')
+mongoose.Promise = require('bluebird');
 
 mongoose.connect(mongoUri)
 console.log(mongoose.connection.host)
